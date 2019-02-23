@@ -8,7 +8,9 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	//"k8s.io/client-go/rest" -- To be Added when moving to in cluster setup
 	"log"
+	"math"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -69,6 +71,19 @@ func getDeletablePods(clientset *kubernetes.Clientset, whitelistedNS []string) (
 	return deletablePods, nil
 }
 
+func getDeleteNum(numRunningPods int) int {
+	deletePercentage, _ := strconv.ParseInt(os.Getenv("DELETE_NUM_PERCENTAGE"), 0, 64)
+	if deletePercentage <= 0 {
+		log.Println("Delete percentage is set to 0 or less. Nothing to delete")
+		return 0
+	}
+	if deletePercentage >= 100 {
+		log.Println("Delete percentage is set to 100 or more. Deleting all pods")
+		return numRunningPods
+	}
+	return int(math.Floor(float64(numRunningPods) * float64(deletePercentage) / 100))
+}
+
 func main() {
 	// TODO: Use in cluster config after initial testing phase
 	//kconfig, err := rest.InClusterConfig()
@@ -91,12 +106,10 @@ func main() {
 	for _, pod := range deletablePods {
 		fmt.Println(pod.Namespace, pod.Name, pod.Status.Phase)
 	}
+
+	fmt.Println(getDeleteNum(len(deletablePods)))
 }
 
-// Get the whitelisted namespaces
-// Get the running pods
-// Get the killable pods
-// Get the percentage of pods to kill
 // Kill random pods from the killable pods list
 // Wait for an 10 minutes and repeat the process
 // Refactor
