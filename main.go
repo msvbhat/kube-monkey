@@ -6,9 +6,12 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	//"k8s.io/client-go/rest" -- TODO: To be uncommented when moving to in cluster setup
+	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"math"
 	"math/rand"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -104,6 +107,7 @@ func deletePods(clientset *kubernetes.Clientset, deletablePods []v1.Pod, numDele
 	return nil
 }
 
+// Get the Waiting period between each invocation of Pod deletion
 func getWaitingPeriod() int {
 	waitMinutes, _ := strconv.ParseInt(os.Getenv("WAIT_MINUTES"), 0, 64)
 	if waitMinutes <= 0 {
@@ -113,6 +117,7 @@ func getWaitingPeriod() int {
 	return int(waitMinutes)
 }
 
+// Kill pods at random
 func kube_monkey() {
 	waitingPeriod := getWaitingPeriod()
 	for {
@@ -145,11 +150,20 @@ func kube_monkey() {
 	}
 }
 
+// Handler for health check endpoint
+func Health(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "healthy")
+}
+
 func main() {
-	kube_monkey()
+	go kube_monkey()
+	router := mux.NewRouter()
+	router.HandleFunc("/", Health)
+	router.HandleFunc("/health", Health)
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
 // Refactor
-// Get a health endpoint
 // Get metric endpoint
 // Send events to pods
