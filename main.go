@@ -104,7 +104,17 @@ func deletePods(clientset *kubernetes.Clientset, deletablePods []v1.Pod, numDele
 	return nil
 }
 
+func getWaitingPeriod() int {
+	waitMinutes, _ := strconv.ParseInt(os.Getenv("WAIT_MINUTES"), 0, 64)
+	if waitMinutes <= 0 {
+		log.Println("Can not wait for zero 0r less. Setting the value as 1")
+		return 1
+	}
+	return int(waitMinutes)
+}
+
 func kube_monkey() {
+	waitingPeriod := getWaitingPeriod()
 	for {
 		// TODO: Use in cluster config after initial testing phase
 		//kconfig, err := rest.InClusterConfig()
@@ -131,7 +141,7 @@ func kube_monkey() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		time.Sleep(5 * time.Minute)
+		time.Sleep(time.Duration(waitingPeriod) * time.Minute)
 	}
 }
 
@@ -139,7 +149,6 @@ func main() {
 	kube_monkey()
 }
 
-// Wait for an 10 minutes and repeat the process
 // Refactor
 // Get a health endpoint
 // Get metric endpoint
