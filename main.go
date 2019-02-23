@@ -5,7 +5,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
-	//"k8s.io/client-go/rest" -- To be Added when moving to in cluster setup
+	//"k8s.io/client-go/rest" -- TODO: To be uncommented when moving to in cluster setup
 	"log"
 	"math"
 	"math/rand"
@@ -104,32 +104,39 @@ func deletePods(clientset *kubernetes.Clientset, deletablePods []v1.Pod, numDele
 	return nil
 }
 
+func kube_monkey() {
+	for {
+		// TODO: Use in cluster config after initial testing phase
+		//kconfig, err := rest.InClusterConfig()
+		kconfig, err := clientcmd.BuildConfigFromFlags("", "/Users/msvbhat/.kube/config")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		clientset, err := kubernetes.NewForConfig(kconfig)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		whitelistedNS := getWhitelistedNS()
+		deletablePods, err := getDeletablePods(clientset, whitelistedNS)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		numDeletePods := getDeleteNum(len(deletablePods))
+		log.Printf("Deleting %d pods\n", numDeletePods)
+
+		err = deletePods(clientset, deletablePods, numDeletePods)
+		if err != nil {
+			log.Fatal(err)
+		}
+		time.Sleep(5 * time.Minute)
+	}
+}
+
 func main() {
-	// TODO: Use in cluster config after initial testing phase
-	//kconfig, err := rest.InClusterConfig()
-	kconfig, err := clientcmd.BuildConfigFromFlags("", "/Users/msvbhat/.kube/config")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	clientset, err := kubernetes.NewForConfig(kconfig)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	whitelistedNS := getWhitelistedNS()
-	deletablePods, err := getDeletablePods(clientset, whitelistedNS)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	numDeletePods := getDeleteNum(len(deletablePods))
-	log.Printf("Deleting %d pods\n", numDeletePods)
-
-	err = deletePods(clientset, deletablePods, numDeletePods)
-	if err != nil {
-		log.Fatal(err)
-	}
+	kube_monkey()
 }
 
 // Wait for an 10 minutes and repeat the process
