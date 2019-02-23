@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -9,9 +9,11 @@ import (
 	//"k8s.io/client-go/rest" -- To be Added when moving to in cluster setup
 	"log"
 	"math"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Get a list of whitelisted Namespaces. The pods in the whitelisted
@@ -84,6 +86,22 @@ func getDeleteNum(numRunningPods int) int {
 	return int(math.Floor(float64(numRunningPods) * float64(deletePercentage) / 100))
 }
 
+func deletePod(clientset *kubernetes.Clientset, pod v1.Pod) error {
+	return clientset.CoreV1().Pods(pod.Namespace).Delete(pod.Name, &metav1.DeleteOptions{})
+}
+
+func deletePods(clientset *kubernetes.Clientset, deletablePods []v1.Pod, numDeletePods int) error {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; i < numDeletePods; i++ {
+		podToBeDeleted := deletablePods[r.Intn(len(deletablePods))]
+		err := deletePod(clientset, podToBeDeleted)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func main() {
 	// TODO: Use in cluster config after initial testing phase
 	//kconfig, err := rest.InClusterConfig()
@@ -103,14 +121,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	for _, pod := range deletablePods {
-		fmt.Println(pod.Namespace, pod.Name, pod.Status.Phase)
-	}
+	numDeletePods := getDeleteNum(len(deletablePods))
+	log.Printf("Deleting %d pods\n", numDeletePods)
 
-	fmt.Println(getDeleteNum(len(deletablePods)))
+	err = deletePods(clientset, deletablePods, numDeletePods)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-// Kill random pods from the killable pods list
 // Wait for an 10 minutes and repeat the process
 // Refactor
 // Get a health endpoint
