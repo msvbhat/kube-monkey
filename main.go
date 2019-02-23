@@ -1,7 +1,6 @@
 package main
 
 import (
-	//"fmt"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -73,8 +72,9 @@ func getDeletablePods(clientset *kubernetes.Clientset, whitelistedNS []string) (
 	return deletablePods, nil
 }
 
+// Get the number of pods to be deleted from the environment variable
 func getDeleteNum(numRunningPods int) int {
-	deletePercentage, _ := strconv.ParseInt(os.Getenv("DELETE_NUM_PERCENTAGE"), 0, 64)
+	deletePercentage, _ := strconv.ParseInt(os.Getenv("DELETE_PERCENTAGE"), 0, 64)
 	if deletePercentage <= 0 {
 		log.Println("Delete percentage is set to 0 or less. Nothing to delete")
 		return 0
@@ -86,10 +86,12 @@ func getDeleteNum(numRunningPods int) int {
 	return int(math.Floor(float64(numRunningPods) * float64(deletePercentage) / 100))
 }
 
+// Delete the pod and return error value
 func deletePod(clientset *kubernetes.Clientset, pod v1.Pod) error {
 	return clientset.CoreV1().Pods(pod.Namespace).Delete(pod.Name, &metav1.DeleteOptions{})
 }
 
+// Delete the random pods and return error value
 func deletePods(clientset *kubernetes.Clientset, deletablePods []v1.Pod, numDeletePods int) error {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for i := 0; i < numDeletePods; i++ {
