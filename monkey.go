@@ -2,8 +2,7 @@ package main
 
 import (
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
-	//"k8s.io/client-go/rest" -- TODO: To be uncommented when moving to in cluster setup
+	"k8s.io/client-go/rest"
 	"log"
 	"time"
 )
@@ -13,9 +12,7 @@ func kubeMonkey(status chan string) {
 	defer func() { status <- "stop" }()
 	waitingPeriod := getWaitingPeriod()
 	for {
-		// TODO: Use in cluster config after initial testing phase
-		//kconfig, err := rest.InClusterConfig()
-		kconfig, err := clientcmd.BuildConfigFromFlags("", "/Users/msvbhat/.kube/config")
+		kconfig, err := rest.InClusterConfig()
 		if err != nil {
 			log.Fatal(err)
 		}
