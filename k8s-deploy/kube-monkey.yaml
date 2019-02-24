@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-monkey
+  labels:
+    app: kube-monkey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-monkey
+  template:
+    metadata:
+      namespace: default
+      labels:
+        app: kube-monkey
+    spec:
+      serviceAccountName: kube-monkey
+      containers:
+      - name: kube-monkey
+        image: msvbhat/kube-monkey:1.1
+        imagePullPolicy: Always
+        env:
+        - name: WAIT_MINUTES
+          value: "2"
+        - name: DELETE_PERCENTAGE
+          value: "50"
+        - name: NAMESPACE_WHITELIST
+          value: "kube-system"
