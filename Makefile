@@ -2,7 +2,7 @@ GO_FILES := $(shell find . -type f -name '*.go' | grep -v /vendor/ | grep -v _te
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 BINARY := kube-monkey
 
-.PHONY: all dep build clean test coverage lint
+.PHONY: all dep lint build docker clean
 
 all: build
 
