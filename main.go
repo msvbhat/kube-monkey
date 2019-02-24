@@ -11,6 +11,3 @@ func main() {
 		log.Println("Received the stop signal.")
 	}
 }
-
-// Get metric endpoint
-// Send events to pods

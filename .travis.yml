@@ -1,0 +1,15 @@
+language: go
+
+services:
+  - docker
+
+install:
+  - make dep
+  - go get -u github.com/golang/lint/golint
+
+script:
+- make lint
+- make build
+- docker build -t msvbhat/kube-monkey:${TRAVIS_JOB_NUMBER} .
+- echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin
+- docker push msvbhat/kube-monkey:${TRAVIS_JOB_NUMBER}
