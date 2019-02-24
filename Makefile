@@ -15,5 +15,8 @@ lint: ## Run the golint
 build: ## Build the static binary
 	@env CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -i -o ${BINARY}
 
+docker: ## Build Docker image assuming static binary has been built
+	@docker build -t kube-monkey .
+
 clean: ## Remove the previous build
 	@rm -f ${BINARY}
