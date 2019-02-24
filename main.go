@@ -118,7 +118,8 @@ func getWaitingPeriod() int {
 }
 
 // Kill pods at random
-func kube_monkey() {
+func kubeMonkey(status chan string) {
+	defer func() { status <- "stop" }()
 	waitingPeriod := getWaitingPeriod()
 	for {
 		// TODO: Use in cluster config after initial testing phase
@@ -151,17 +152,28 @@ func kube_monkey() {
 }
 
 // Handler for health check endpoint
-func Health(w http.ResponseWriter, r *http.Request) {
+func health(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "healthy")
 }
 
-func main() {
-	go kube_monkey()
+// Start a Health Check REST Endpoint for checking health
+func healthCheck(status chan string) {
+	defer func() { status <- "stop" }()
 	router := mux.NewRouter()
-	router.HandleFunc("/", Health)
-	router.HandleFunc("/health", Health)
+	router.HandleFunc("/", health)
+	router.HandleFunc("/health", health)
 	log.Fatal(http.ListenAndServe(":8080", router))
+}
+
+func main() {
+	status := make(chan string, 1)
+	go kubeMonkey(status)
+	go healthCheck(status)
+	msg := <-status
+	if msg == "stop" {
+		log.Println("Received the stop signal.")
+	}
 }
 
 // Refactor
