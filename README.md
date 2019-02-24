@@ -1,5 +1,18 @@
 # kube-monkey
 
-kube-monkey is a Kubernetes service that runs inside the Kubernets cluster
-and kills pods at random to test the resiliancy of the whole system.
+kube-monkey is a tool to check the resiliency of the system. It deletes
+random pods repeatedly at specific intervals.
 
+## Description
+
+## Dependencies and Building
+
+## Deploy
+
+### Deploy in minikube
+
+### Deploy in distributed Kubernetes cluster
+
+## Considerations and Limitations
+
+## Planned Enhancements
