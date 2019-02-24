@@ -9,7 +9,7 @@ This is a tool inspired after the
 [Chaos Monkey](https://en.wikipedia.org/wiki/Chaos_engineering#Chaos_Monkey).
 But this simply kills the random pods in the Kubernetes cluster. There are few
 ways to control which pods can be killed and at what intervals etc. Those are
-described below.
+described [below](https://github.com/msvbhat/kube-monkey#deploy).
 
 ## Dependencies and Building
 
@@ -56,7 +56,10 @@ running and `kubectl` is configured to communicate with the cluster.
 ```bash
 kubectl create -f k8s-deploy/rbac.yaml
 ```
-And then to deploy `kube-monkey` as a deployment, run the below command
+And then to deploy `kube-monkey` as a deployment, run the below command. And
+note that the image is pulled from the docker repo `msvbhat/kube-monkey`. If
+you have built another docker image probaly with custom built binary, please
+update it in the [file](k8s-deploy/kube-monkey.yaml).
 
 ```bash
 kubectl create -f k8s-deploy/kube-monkey.yaml
