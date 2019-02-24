@@ -11,3 +11,8 @@ func main() {
 		log.Println("Received the stop signal.")
 	}
 }
+
+// Remove the self pod from deletablePods
+// Add Cron scheduler
+// Send Events
+// Add Metric Endpoint
