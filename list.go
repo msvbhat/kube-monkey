@@ -8,7 +8,8 @@ import (
 )
 
 // Get a list of all running pods in the cluster
-func getRunningPods(clientset *kubernetes.Clientset) (podsRunning []v1.Pod, err error) {
+func getRunningPods(clientset *kubernetes.Clientset) (
+	podsRunning []v1.Pod, err error) {
 	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
 	if err != nil {
 		return nil, err
@@ -33,7 +34,8 @@ func isWhitelisted(whitelistedNS []string, pod v1.Pod) bool {
 }
 
 // Get a list of all pods which are eligible for delete
-func getDeletablePods(clientset *kubernetes.Clientset, whitelistedNS []string) (deletablePods []v1.Pod, err error) {
+func getDeletablePods(clientset *kubernetes.Clientset,
+	whitelistedNS []string) (deletablePods []v1.Pod, err error) {
 	runningPods, err := getRunningPods(clientset)
 	if err != nil {
 		return nil, err

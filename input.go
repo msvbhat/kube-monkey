@@ -28,16 +28,18 @@ func getWhitelistedNS() (whitelistedNS []string) {
 
 // Get the number of pods to be deleted from the environment variable
 func getDeleteNum(numRunningPods int) int {
-	deletePercentage, _ := strconv.ParseInt(os.Getenv("DELETE_PERCENTAGE"), 0, 64)
+	deletePercentage, _ := strconv.ParseInt(os.Getenv("DELETE_PERCENTAGE"),
+		0, 64)
 	if deletePercentage <= 0 {
-		log.Println("Delete percentage is set to 0 or less. Nothing to delete")
+		log.Println("Delete percentage is <= 0. Nothing to delete")
 		return 0
 	}
 	if deletePercentage >= 100 {
-		log.Println("Delete percentage is set to 100 or more. Deleting all pods")
+		log.Println("Delete percentage is >= 100. Deleting all pods")
 		return numRunningPods
 	}
-	return int(math.Floor(float64(numRunningPods) * float64(deletePercentage) / 100))
+	return int(math.Floor(float64(numRunningPods) *
+		float64(deletePercentage) / 100))
 }
 
 // Get the Waiting period between each invocation of Pod deletion

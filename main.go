@@ -8,6 +8,6 @@ func main() {
 	go healthCheck(status)
 	msg := <-status
 	if msg == "stop" {
-		log.Println("Received the stop signal.")
+		log.Println("Received the stop signal. Exiting...")
 	}
 }

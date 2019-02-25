@@ -10,11 +10,13 @@ import (
 
 // Delete the pod and return error value
 func deletePod(clientset *kubernetes.Clientset, pod v1.Pod) error {
-	return clientset.CoreV1().Pods(pod.Namespace).Delete(pod.Name, &metav1.DeleteOptions{})
+	return clientset.CoreV1().Pods(pod.Namespace).
+		Delete(pod.Name, &metav1.DeleteOptions{})
 }
 
 // Delete the random pods and return error value
-func deletePods(clientset *kubernetes.Clientset, deletablePods []v1.Pod, numDeletePods int) error {
+func deletePods(clientset *kubernetes.Clientset, deletablePods []v1.Pod,
+	numDeletePods int) error {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for i := 0; i < numDeletePods; i++ {
 		podToBeDeleted := deletablePods[r.Intn(len(deletablePods))]

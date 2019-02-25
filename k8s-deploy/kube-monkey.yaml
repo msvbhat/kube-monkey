@@ -18,7 +18,7 @@ spec:
       serviceAccountName: kube-monkey
       containers:
       - name: kube-monkey
-        image: msvbhat/kube-monkey:1.1
+        image: msvbhat/kube-monkey:8.1
         imagePullPolicy: Always
         env:
         - name: WAIT_MINUTES
