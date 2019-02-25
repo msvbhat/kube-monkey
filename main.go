@@ -12,7 +12,7 @@ func main() {
 	}
 }
 
-// Remove the self pod from deletablePods
-// Add Cron scheduler
+// Add tests
 // Send Events
-// Add Metric Endpoint
+// Add scheduler
+// Define and add metrics
