@@ -89,6 +89,11 @@ behaviour, please use the below env variables in the deployment manifest.
 This has been only tested with the minikube. But is supposed to run in any
 Kubernetes cluster.
 
+The project doesn't have unit tests yet. Unit tests will be added soon.
+
+Currently the /metrics endpoint is a dummy endpoint. It doesn't return any
+metrics but only returns 200 OK.
+
 ## Planned Enhancements
 
 1. Introdure Active Health Check instead of Passive one
@@ -96,5 +101,5 @@ Kubernetes cluster.
 1. Add sophisticated method of specifying pods with labels etc
 1. Also add blacklisting namespaces
 1. Use cli args instead of env variables
-1. Add Cron scheduling
+1. Add Scheduling
 1. Send events to pods for visibility

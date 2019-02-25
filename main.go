@@ -11,8 +11,3 @@ func main() {
 		log.Println("Received the stop signal.")
 	}
 }
-
-// Add tests
-// Send Events
-// Add scheduler
-// Define and add metrics
