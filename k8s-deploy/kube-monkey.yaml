@@ -27,3 +27,7 @@ spec:
           value: "50"
         - name: NAMESPACE_WHITELIST
           value: "kube-system"
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
