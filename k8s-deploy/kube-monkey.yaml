@@ -21,8 +21,8 @@ spec:
         image: msvbhat/kube-monkey:8.1
         imagePullPolicy: Always
         env:
-        - name: WAIT_MINUTES
-          value: "2"
+        - name: KM_SCHEDULE
+          value: "@every 2m"
         - name: DELETE_PERCENTAGE
           value: "50"
         - name: NAMESPACE_WHITELIST

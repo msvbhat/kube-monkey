@@ -80,9 +80,10 @@ behaviour, please use the below env variables in the deployment manifest.
     are eligible for deletion i.e. this percentage is applied to the pods
     that are not running in whitelisted namespaces.
 
-3. `WAIT_MINUTES` - This is the interval at which to repeat the operation.
-    For example if this is set to 10, pods are deleted every 10 minutes.
-    More sophisticated method of scheduling is planned to be introduced soon.
+3. `KM_SCHEDULE` - This is the schedule for kube monkey to delete pods. This
+    follows the cron syntax. To understand more about the cron syntax that is
+    allowed, please check
+    [docs](https://godoc.org/github.com/robfig/cron#hdr-CRON_Expression_Format)
 
 ## Considerations and Limitations
 
@@ -101,5 +102,4 @@ metrics but only returns 200 OK.
 1. Add sophisticated method of specifying pods with labels etc
 1. Also add blacklisting namespaces
 1. Use cli args instead of env variables
-1. Add Scheduling
 1. Send events to pods for visibility

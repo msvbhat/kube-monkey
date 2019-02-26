@@ -1,10 +1,19 @@
 package main
 
-import "log"
+import (
+	"github.com/robfig/cron"
+	"log"
+)
 
 func main() {
 	status := make(chan string, 1)
-	go kubeMonkey(status)
+	schedule := getSchedule()
+	c := cron.New()
+	err := c.AddFunc(schedule, func() { kubeMonkey(status) })
+	if err != nil {
+		log.Fatal("Error Adding the fucntion to Cron")
+	}
+	c.Start()
 	go healthCheck(status)
 	msg := <-status
 	if msg == "stop" {

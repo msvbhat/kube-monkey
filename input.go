@@ -43,11 +43,11 @@ func getDeleteNum(numRunningPods int) int {
 }
 
 // Get the Waiting period between each invocation of Pod deletion
-func getWaitingPeriod() int {
-	waitMinutes, _ := strconv.ParseInt(os.Getenv("WAIT_MINUTES"), 0, 64)
-	if waitMinutes <= 0 {
-		log.Println("Can not wait for zero 0r less. Setting the value as 1")
-		return 1
+func getSchedule() string {
+	schedule := os.Getenv("KM_SCHEDULE")
+	if schedule == "" {
+		log.Println("Schedule wasn't specified. Using default of every 1m")
+		return "@every 1m"
 	}
-	return int(waitMinutes)
+	return schedule
 }
