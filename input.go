@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/robfig/cron"
 	"log"
 	"math"
 	"os"
@@ -47,6 +48,12 @@ func getSchedule() string {
 	schedule := os.Getenv("KM_SCHEDULE")
 	if schedule == "" {
 		log.Println("Schedule wasn't specified. Using default of every 1m")
+		return "@every 1m"
+	}
+	_, err := cron.Parse(schedule)
+	if err != nil {
+		log.Println(err)
+		log.Println("Invalid schedule. Running every 1m")
 		return "@every 1m"
 	}
 	return schedule
