@@ -1,20 +1,20 @@
 # kube-monkey
 
-kube-monkey is a tool to check the resiliency of the system. It deletes
+kube-monkey is a tool to test the resiliency of the system. It deletes
 random pods repeatedly at specific intervals.
 
 ## Description
 
-This is a tool inspired after the
+This is a tool inspired from the
 [Chaos Monkey](https://en.wikipedia.org/wiki/Chaos_engineering#Chaos_Monkey).
-But this simply kills the random pods in the Kubernetes cluster. There are few
+This simply kills the random pods in the Kubernetes cluster. There are few
 ways to control which pods can be killed and at what intervals etc. Those are
 described [below](https://github.com/msvbhat/kube-monkey#deploy).
 
 ## Dependencies and Building
 
 The tool is written in go and uses official
-[client-go](https://github.com/kubernetes/client-go/) library. Also to expose
+[client-go](https://github.com/kubernetes/client-go/) library. And to expose
 the health check API it uses [mux](https://github.com/gorilla/mux) project.
 
 ### Installing dependencies
@@ -27,7 +27,7 @@ make dep
 
 This installs all the dependencies of the repo. Note that this project does
 not use the dependency management or vendoring yet. So the behaviour might
-be different for you. I will add dependency management soon in future.
+be different for you. Dependency management will be added soon in future.
 
 ### Buidling
 
@@ -56,10 +56,18 @@ running and `kubectl` is configured to communicate with the cluster.
 ```bash
 kubectl create -f k8s-deploy/rbac.yaml
 ```
-And then to deploy `kube-monkey` as a deployment, run the below command. And
-note that the image is pulled from the docker repo `msvbhat/kube-monkey`. If
-you have built another docker image probaly with custom built binary, please
-update it in the [file](k8s-deploy/kube-monkey.yaml).
+
+Above comman creates below resources in the Kubernetes cluster
+
+1. A `ClusterRole` with the name `kube-monkey`
+1. A `ServiceAccount` with the name `kube-monkey`
+1. A `ClusterRoleBinding` binding these in `default namespace`
+
+And then to deploy `kube-monkey` as a kubernetes deployment, run the below
+command. And note that the image is pulled from the docker
+repo `msvbhat/kube-monkey`. If you have built another docker image probaly
+with custom built binary, please update it
+in the [file](k8s-deploy/kube-monkey.yaml).
 
 ```bash
 kubectl create -f k8s-deploy/kube-monkey.yaml
@@ -72,15 +80,15 @@ behaviour, please use the below env variables in the deployment manifest.
 1. `NAMESPACE_WHITELIST` - This is a space seperated list of Namespaces that
     should be whitelisted from killing pods. That means the pods running in
     these namespaces will not be considered for deleting. And the namespace
-    kube-system is always whitelisted.
+    kube-system is always whitelisted even if not specified in the list.
 
-2. `DELETE_PERCENTAGE` - This is the percentage of pods that should be
+1. `DELETE_PERCENTAGE` - This is the percentage of pods that should be
     deleted. To not delete any pod, specify 0 and to delete all pods
     specify 100. But note that this percentage is applied to the pods that
     are eligible for deletion i.e. this percentage is applied to the pods
     that are not running in whitelisted namespaces.
 
-3. `KM_SCHEDULE` - This is the schedule for kube monkey to delete pods. This
+1. `KM_SCHEDULE` - This is the schedule for kube monkey to delete pods. This
     follows the cron syntax. To understand more about the cron syntax that is
     allowed, please check
     [docs](https://godoc.org/github.com/robfig/cron#hdr-CRON_Expression_Format)
@@ -97,9 +105,9 @@ metrics but only returns 200 OK.
 
 ## Planned Enhancements
 
-1. Introdure Active Health Check instead of Passive one
-1. Define metrics for exporting and add metrics endpoint
-1. Add sophisticated method of specifying pods with labels etc
+1. Define metrics for exporting and export them through metrics endpoint
+1. Add sophisticated method of specifying pods with specific labels etc
 1. Also add blacklisting namespaces
-1. Use cli args instead of env variables
 1. Send events to pods for visibility
+1. Use cli args instead of env variables
+1. More options to delete pods on specific nodes only etc
