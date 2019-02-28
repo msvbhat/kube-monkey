@@ -8,6 +8,7 @@ import (
 func main() {
 	status := make(chan string, 1)
 	schedule := getSchedule()
+	log.Printf("The schedule is %s\n", schedule)
 	c := cron.New()
 	err := c.AddFunc(schedule, func() { kubeMonkey(status) })
 	if err != nil {

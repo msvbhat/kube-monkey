@@ -16,7 +16,7 @@ func health(w http.ResponseWriter, r *http.Request) {
 // TODO: Define and provide meaningful metrics via below Handler
 func metrics(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Still not implemented")
+	fmt.Fprintf(w, "Still not fully implemented")
 }
 
 // Start a Health Check REST Endpoint for checking health

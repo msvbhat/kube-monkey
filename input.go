@@ -22,6 +22,7 @@ func getWhitelistedNS() (whitelistedNS []string) {
 		}
 	}
 	if !flag {
+		log.Println("Adding kube-system to the whitelisted namespaces")
 		whitelistedNS = append(whitelistedNS, "kube-system")
 	}
 	return whitelistedNS

@@ -8,7 +8,7 @@ import (
 
 // Kill pods at random
 func kubeMonkey(status chan string) {
-	log.Println("kubeMonkey started...")
+	log.Println("Starting kube monkey...")
 	kconfig, err := rest.InClusterConfig()
 	if err != nil {
 		log.Fatal(err)
@@ -36,5 +36,5 @@ func kubeMonkey(status chan string) {
 		log.Fatal(err)
 		status <- "stop"
 	}
-	log.Println("Deleted the specific pods")
+	log.Printf("Deleted %d Pods in cluster.\n", len(deletablePods))
 }
