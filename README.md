@@ -61,7 +61,7 @@ Above comman creates below resources in the Kubernetes cluster
 
 1. A `ClusterRole` with the name `kube-monkey`
 1. A `ServiceAccount` with the name `kube-monkey`
-1. A `ClusterRoleBinding` binding these in `default namespace`
+1. A `ClusterRoleBinding` binding these in namespace `default`
 
 And then to deploy `kube-monkey` as a kubernetes deployment, run the below
 command. And note that the image is pulled from the docker
